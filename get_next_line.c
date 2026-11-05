@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-char	*read_to_stash(int fd, char *stash)//читет из fd кусками и дописывает их в stash
+char	*ft_read_to_stash(int fd, char *stash)
 {
 	char	*buf;
 	ssize_t	bytes;
@@ -16,11 +16,11 @@ char	*read_to_stash(int fd, char *stash)//читет из fd кусками и �
 	{
 		bytes = read(fd, buf, BUFFER_SIZE);
 		if (bytes == -1)
-			{
-				free(buf);
-				free(stash);
-				return (NULL);
-			}
+		{
+			free(buf);
+			free(stash);
+			return (NULL);
+		}
 		buf[bytes] = '\0';
 		stash = ft_strjoin(stash, buf);
 	}
@@ -28,16 +28,52 @@ char	*read_to_stash(int fd, char *stash)//читет из fd кусками и �
 	return (stash);
 }
 
+char	*ft_extract_line(char *stash)
+{
+	char	*a;
+	size_t	b;
+
+	if (stash == NULL || stash[0] == '\0')
+		return (NULL);
+	a = ft_strchr(stash, '\n');
+	if (a != NULL)
+		b = a - stash + 1;
+	else
+		b = ft_strlen(stash);
+	return (ft_substr(stash, 0, b));
+}
+
+char	*ft_clean_stash(char *stash)
+{
+	char	*a;
+	size_t	start;
+	char	*k;
+
+	if (stash == NULL)
+		return (NULL);
+	a = ft_strchr(stash, '\n');
+	if (a == NULL)
+	{
+		free (stash);
+		return (NULL);
+	}
+	start = a - stash + 1;
+	k = ft_substr(stash, start, ft_strlen(stash) - start);
+	free (stash);
+	return (k);
+}
 
 char	*get_next_line(int fd)
 {
 	static char	*stash;
+	char		*line;
 
-	return (NULL);
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	stash = ft_read_to_stash(fd, stash);
+	if (stash == NULL)
+		return (NULL);
+	line = ft_extract_line(stash);
+	stash = ft_clean_stash(stash);
+	return (line);
 }
-
-//fd — откуда читать (параметр твоей функции);
-// buf — куда положить (твоя корзинка);
-// count — сколько максимум прочитать (BUFFER_SIZE).
-//read возвращает не «-1 либо +1», а -1, 0 или количество прочитанных байт (например, 42).
-

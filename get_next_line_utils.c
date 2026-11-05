@@ -71,7 +71,7 @@ char	*ft_substr(char *s, size_t start, size_t len)
 {
 	char	*ptr;
 
-	ptr = malloc(sizeof(char) * (len +1));
+	ptr = malloc(sizeof(char) * (len + 1));
 	if (!ptr)
 		return (NULL);
 	ft_copy(ptr, &s[start], len);
